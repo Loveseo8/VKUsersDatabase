@@ -31,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
     TextView textView;
     String key = "8a47bbea8a47bbea8a47bbeafa8a32c9f088a478a47bbead59347e438c8ab96e520554f";
     String json = "";
+    DBHandler db;
 
 
     class CountTask extends AsyncTask<Integer, Integer, Void> {
@@ -76,6 +77,7 @@ public class MainActivity extends AppCompatActivity {
         protected Void doInBackground(Integer... users) {
             for (int userID: users){
                 try {
+                    db.insertRecord(getInfoByID(userID).first_name);
                     Log.d("TAGA", getInfoByID(userID).first_name);
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -99,11 +101,13 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        db = new DBHandler(getApplicationContext());
+
         textView = findViewById(R.id.user_info);
 
         CountTask task = new CountTask();
         task.execute(368468514);
-        textView.setText("response.id");
+        textView.setText(db.getRecords());
 
     }
 
