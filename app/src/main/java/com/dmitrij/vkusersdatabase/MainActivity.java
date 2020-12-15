@@ -5,6 +5,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
@@ -26,12 +29,13 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
-    ArrayList<Response> responses = new ArrayList<>();;
-
     TextView textView;
     String key = "8a47bbea8a47bbea8a47bbeafa8a32c9f088a478a47bbead59347e438c8ab96e520554f";
     String json = "";
     DBHandler db;
+    EditText enter_id;
+    Button button_insert;
+    Button button_show;
 
 
     class CountTask extends AsyncTask<Integer, Integer, Void> {
@@ -55,6 +59,13 @@ public class MainActivity extends AppCompatActivity {
             
             Response response = null;
 
+            String first_name = null;
+            int id = 0;
+            String last_name = null;
+            boolean can_access_closed = false;
+            boolean is_closed = false;
+            String bdate = null;
+
             JSONObject reader = new JSONObject(json);
             JSONArray jsonArray = reader.getJSONArray("response");
             for(int i = 0; i < jsonArray.length(); i++){
@@ -62,12 +73,19 @@ public class MainActivity extends AppCompatActivity {
 
                     JSONObject jsonObject = jsonArray.getJSONObject(i);
 
-                    response = new Response(jsonObject.getString("first_name"), jsonObject.getInt("id"), jsonObject.getString("last_name"), jsonObject.getBoolean("can_access_closed"), jsonObject.getBoolean("is_closed"), jsonObject.getString("bdate"));
-                    responses.add(response);
+                    first_name = jsonObject.getString("first_name");
+                    id = jsonObject.getInt("id");
+                    last_name = jsonObject.getString("last_name");
+                    can_access_closed =jsonObject.getBoolean("can_access_closed");
+                    is_closed = jsonObject.getBoolean("is_closed");
+                    bdate = jsonObject.getString("bdate");
+
                 }catch (JSONException e){
 
                 }
             }
+
+            response = new Response(first_name, id, last_name, can_access_closed, is_closed, bdate);
             
 
             return response;
@@ -77,8 +95,8 @@ public class MainActivity extends AppCompatActivity {
         protected Void doInBackground(Integer... users) {
             for (int userID: users){
                 try {
-                    db.insertRecord(getInfoByID(userID).first_name);
-                    Log.d("TAGA", getInfoByID(userID).first_name);
+                    db.insertRecord(getInfoByID(userID).first_name, getInfoByID(userID).last_name);
+                    Log.d("TAGA", getInfoByID(userID).first_name+ " " + getInfoByID(userID).last_name);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -103,11 +121,29 @@ public class MainActivity extends AppCompatActivity {
 
         db = new DBHandler(getApplicationContext());
 
+        enter_id = findViewById(R.id.enter_id);
         textView = findViewById(R.id.user_info);
+        button_insert = findViewById(R.id.button_insert);
+        button_show = findViewById(R.id.button_show);
 
-        CountTask task = new CountTask();
-        task.execute(368468514);
-        textView.setText(db.getRecords());
+        button_show.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                textView.setText(db.getRecords());
+
+            }
+        });
+
+        button_insert.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                CountTask task = new CountTask();
+                task.execute(Integer.parseInt(enter_id.getText().toString()));
+
+            }
+        });
 
     }
 
