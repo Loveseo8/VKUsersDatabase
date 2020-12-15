@@ -2,38 +2,43 @@ package com.dmitrij.vkusersdatabase;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
+    ArrayList<Response> responses = new ArrayList<>();;
+
     TextView textView;
+    String key = "8a47bbea8a47bbea8a47bbeafa8a32c9f088a478a47bbead59347e438c8ab96e520554f";
+    String json = "";
 
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+    class CountTask extends AsyncTask<Integer, Integer, Void> {
 
-        textView = findViewById(R.id.user_info);
 
-        Gson gson = new Gson();
-        String key = "8a47bbea8a47bbea8a47bbeafa8a32c9f088a478a47bbead59347e438c8ab96e520554f";
-        String user_id = "368468514";
-        String json = "";
-        String strUrl = "https://api.vk.com/method/users.get?user_ids=" + user_id + "&fields=bdate&access_token=" + key + "&v=5.126";
-
+        public Response getInfoByID(int userID) throws JSONException {
             try {
-
-                URL url = new URL(strUrl);
+                URL url = new URL("https://api.vk.com/method/users.get?user_ids=" + userID + "&fields=bdate&access_token=" + key + "&v=5.126");
                 URLConnection yc = url.openConnection();
                 yc.connect();
                 BufferedReader buffIn = new BufferedReader(new InputStreamReader(yc.getInputStream()));
@@ -46,31 +51,80 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
 
             }
+            
+            Response response = null;
 
-        Response response;
+            JSONObject reader = new JSONObject(json);
+            JSONArray jsonArray = reader.getJSONArray("response");
+            for(int i = 0; i < jsonArray.length(); i++){
+                try{
 
-            response = gson.fromJson(json, Response.class);
+                    JSONObject jsonObject = jsonArray.getJSONObject(i);
 
-            textView.setText(response.user.first_name);
+                    response = new Response(jsonObject.getString("first_name"), jsonObject.getInt("id"), jsonObject.getString("last_name"), jsonObject.getBoolean("can_access_closed"), jsonObject.getBoolean("is_closed"), jsonObject.getString("bdate"));
+                    responses.add(response);
+                }catch (JSONException e){
+
+                }
+            }
+            
+
+            return response;
 
         }
-
+        @Override
+        protected Void doInBackground(Integer... users) {
+            for (int userID: users){
+                try {
+                    Log.d("TAGA", getInfoByID(userID).first_name);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                publishProgress(userID);
+            }
+            return null;
+        }
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+        }
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+            super.onProgressUpdate(values);
+        }
     }
 
 
-class Response {
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
 
-    User user;
+        textView = findViewById(R.id.user_info);
 
-}
+        CountTask task = new CountTask();
+        task.execute(368468514);
+        textView.setText("response.id");
 
-class User {
+    }
 
-    public int id;
-    public String bdate;
-    public String first_name;
-    public String last_name;
-    public String connections;
-    public Boolean is_closed;
+    }
 
+class Response{
+
+    String first_name;
+    int id;
+    String last_name;
+    boolean can_access_closed;
+    boolean is_closed;
+    String bdate;
+
+
+    public Response(String first_name, int id, String last_name, boolean can_access_closed, boolean is_closed, String bdate) {
+        this.first_name = first_name;
+        this.id = id;
+        this.last_name = last_name;
+        this.can_access_closed = can_access_closed;
+        this.is_closed = is_closed;
+        this.bdate = bdate;
+    }
 }
