@@ -15,6 +15,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+import org.joda.time.LocalDate;
+import org.joda.time.Years;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -26,6 +28,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -77,6 +80,7 @@ public class MainActivity extends AppCompatActivity {
             int has_photo = 0;
             String interests = null;
             int groups = 0;
+            int pages = 0;
             int friends = 0;
             int followers = 0;
             String phone_number = null;
@@ -104,9 +108,18 @@ public class MainActivity extends AppCompatActivity {
                     interests = jsonObject.getString("interests");
                     phone_number = jsonObject.getString("phone_number");
                     is_closed = jsonObject.getBoolean("is_closed");
+
+                }catch (JSONException e){
+
+                }
+            }
+
+            for(int i = 0; i < jsonArray.length(); i++){
+                try{
+
+                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+
                     counters = jsonObject.getString("counters");
-
-
 
                 }catch (JSONException e){
 
@@ -119,16 +132,36 @@ public class MainActivity extends AppCompatActivity {
             read = new JSONObject(last_seen);
             int time = read.getInt("time");
 
-            //JSONObject r = new JSONObject(counters);
-            //groups = r.getInt("groups");
-            //friends = r.getInt("friends");
-            //followers = r.getInt("followers");
+            Date lst = new Date((long)time*1000);
 
+            DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault());
+            String last_seen_time = dateFormat.format(lst);
+
+            String []bday = bdate.split("\\.");
+
+            if(bday.length == 3) {
+
+                LocalDate birthdate = new LocalDate(Integer.parseInt(bday[2]), Integer.parseInt(bday[1]), Integer.parseInt(bday[0]));
+                LocalDate now = new LocalDate();
+                Years age = Years.yearsBetween(birthdate, now);
+
+                String agee = age.toString();
+
+                bdate = agee;
+
+            }
+
+
+            JSONObject r = new JSONObject(counters);
+            followers = r.getInt("followers");
+            pages = r.getInt("pages");
+
+            //friends = r.getInt("friends");
 
             if(university_name != "") education = university_name;
             if(faculty_name != "") education += " " + faculty_name;
 
-            response = new Response(0, id, last_name, first_name, sex, bdate, adress, time, education.trim(), has_photo, interests, groups, friends, followers, phone_number, counters, is_closed);
+            response = new Response(0, id, last_name, first_name, sex, bdate, adress, last_seen_time, education.trim(), has_photo, interests, pages, friends, followers, phone_number, counters, is_closed);
             
 
             return response;
@@ -139,7 +172,7 @@ public class MainActivity extends AppCompatActivity {
             for (int userID: users){
                 try {
                     //db.insertRecord(getInfoByID(userID).first_name, getInfoByID(userID).last_name);
-                    Log.d("TAGA", getInfoByID(userID).id + " " + getInfoByID(userID).last_name + " " + getInfoByID(userID).first_name + " " + getInfoByID(userID).sex + " " + getInfoByID(userID).bdate + " " + getInfoByID(userID).adress + " " + getInfoByID(userID).last_seen + " " + getInfoByID(userID).education + " " + getInfoByID(userID).has_photo + " " + getInfoByID(userID).interests +  " " + getInfoByID(userID).phone_number + " " + getInfoByID(userID).counters + " " + getInfoByID(userID).is_closed);
+                    Log.d("TAGA", getInfoByID(userID).id + " " + getInfoByID(userID).last_name + " " + getInfoByID(userID).first_name + " " + getInfoByID(userID).sex + " " + getInfoByID(userID).bdate + " " + getInfoByID(userID).adress + " " + getInfoByID(userID).last_seen + " " + getInfoByID(userID).education + " " + getInfoByID(userID).has_photo + " " + getInfoByID(userID).interests +  " " + getInfoByID(userID).phone_number + " " +getInfoByID(userID).is_closed + " " + getInfoByID(userID).followers + " " + getInfoByID(userID).friends + " " + getInfoByID(userID).groups + " " + getInfoByID(userID).counters);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -201,7 +234,7 @@ class Response{
     int sex;
     String bdate;
     String adress;
-    int last_seen;
+    String last_seen;
     String education;
     int has_photo;
     String interests;
@@ -215,7 +248,7 @@ class Response{
     //НА СТРАНИЦАХ ПОЛЬЗОВАТЕЛЕЙ НЕ ОТОБРАЖАЕТСЯ АДРЕС ЭЛЕКТРОННОЙ ПОЧТЫ И МЕТОД ДЛЯ ЕЁ ПОЛУЧЕНИЯ ОТСУТВУЕТ У VK api
 
 
-    public Response(int color_index, int id, String last_name, String first_name, int sex, String bdate, String adress, int last_seen, String education, int has_photo, String interests, int groups, int friends, int followers, String phone_number, String counters, boolean is_closed) {
+    public Response(int color_index, int id, String last_name, String first_name, int sex, String bdate, String adress, String last_seen, String education, int has_photo, String interests, int groups, int friends, int followers, String phone_number, String counters, boolean is_closed) {
         this.color_index = color_index;
         this.id = id;
         this.last_name = last_name;
