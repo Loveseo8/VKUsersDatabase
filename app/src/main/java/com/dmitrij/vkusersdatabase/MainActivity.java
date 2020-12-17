@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
 
         public Response getInfoByID(int userID) throws JSONException {
             try {
-                URL url = new URL("https://api.vk.com/method/users.get?user_ids=" + userID + "&fields=bdate,sex,last_seen,city,has_photo,interests,counters,schools,contacts,occupation,education&access_token=" + key + "&v=5.126");
+                URL url = new URL("https://api.vk.com/method/users.get?user_ids=" + userID + "&fields=counters,bdate,sex,last_seen,city,has_photo,interests,counters,contacts,education&access_token=" + key + "&v=5.126");
                 URLConnection yc = url.openConnection();
                 yc.connect();
                 BufferedReader buffIn = new BufferedReader(new InputStreamReader(yc.getInputStream()));
@@ -72,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
             String faculty_name = null;
             String bdate = null;
             String adress = null;
-            int last_seen = 0;
+            String last_seen = null;
             String education = null;
             int has_photo = 0;
             String interests = null;
@@ -81,6 +81,7 @@ public class MainActivity extends AppCompatActivity {
             int followers = 0;
             String phone_number = null;
             String counters = null;
+            boolean is_closed = false;
 
             JSONObject reader = new JSONObject(json);
             JSONArray jsonArray = reader.getJSONArray("response");
@@ -96,12 +97,13 @@ public class MainActivity extends AppCompatActivity {
                     bdate = jsonObject.getString("bdate");
                     sex = jsonObject.getInt("sex");
                     adress = jsonObject.getString("city");
-                    last_seen = jsonObject.getInt("last_seen");
+                    last_seen = jsonObject.getString("last_seen");
                     university_name = jsonObject.getString("university_name");
                     faculty_name = jsonObject.getString("faculty_name");
                     has_photo = jsonObject.getInt("has_photo");
                     interests = jsonObject.getString("interests");
                     phone_number = jsonObject.getString("phone_number");
+                    is_closed = jsonObject.getBoolean("is_closed");
                     counters = jsonObject.getString("counters");
 
 
@@ -114,14 +116,19 @@ public class MainActivity extends AppCompatActivity {
             JSONObject read = new JSONObject(adress);
             adress = read.getString("title");
 
+            read = new JSONObject(last_seen);
+            int time = read.getInt("time");
+
             //JSONObject r = new JSONObject(counters);
             //groups = r.getInt("groups");
             //friends = r.getInt("friends");
             //followers = r.getInt("followers");
 
-            education = university_name + ", " + faculty_name;
 
-            response = new Response(0, id, last_name, first_name, sex, bdate, adress, last_seen, education, has_photo, interests, groups, friends, followers, phone_number, counters);
+            if(university_name != "") education = university_name;
+            if(faculty_name != "") education += " " + faculty_name;
+
+            response = new Response(0, id, last_name, first_name, sex, bdate, adress, time, education.trim(), has_photo, interests, groups, friends, followers, phone_number, counters, is_closed);
             
 
             return response;
@@ -132,7 +139,7 @@ public class MainActivity extends AppCompatActivity {
             for (int userID: users){
                 try {
                     //db.insertRecord(getInfoByID(userID).first_name, getInfoByID(userID).last_name);
-                    Log.d("TAGA", getInfoByID(userID).id + " " + getInfoByID(userID).last_name + " " + getInfoByID(userID).first_name + " " + getInfoByID(userID).sex + " " + getInfoByID(userID).bdate + " " + getInfoByID(userID).adress + " " + getInfoByID(userID).last_seen + " " + getInfoByID(userID).education + " " + getInfoByID(userID).has_photo + " " + getInfoByID(userID).interests + " " + getInfoByID(userID).groups + " " + getInfoByID(userID).friends + " " + getInfoByID(userID).followers + " " + getInfoByID(userID).phone_number);
+                    Log.d("TAGA", getInfoByID(userID).id + " " + getInfoByID(userID).last_name + " " + getInfoByID(userID).first_name + " " + getInfoByID(userID).sex + " " + getInfoByID(userID).bdate + " " + getInfoByID(userID).adress + " " + getInfoByID(userID).last_seen + " " + getInfoByID(userID).education + " " + getInfoByID(userID).has_photo + " " + getInfoByID(userID).interests +  " " + getInfoByID(userID).phone_number + " " + getInfoByID(userID).counters + " " + getInfoByID(userID).is_closed);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -203,11 +210,12 @@ class Response{
     int followers;
     String phone_number;
     String counters;
+    boolean is_closed;
 
     //НА СТРАНИЦАХ ПОЛЬЗОВАТЕЛЕЙ НЕ ОТОБРАЖАЕТСЯ АДРЕС ЭЛЕКТРОННОЙ ПОЧТЫ И МЕТОД ДЛЯ ЕЁ ПОЛУЧЕНИЯ ОТСУТВУЕТ У VK api
 
 
-    public Response(int color_index, int id, String last_name, String first_name, int sex, String bdate, String adress, int last_seen, String education, int has_photo, String interests, int groups, int friends, int followers, String phone_number, String counters) {
+    public Response(int color_index, int id, String last_name, String first_name, int sex, String bdate, String adress, int last_seen, String education, int has_photo, String interests, int groups, int friends, int followers, String phone_number, String counters, boolean is_closed) {
         this.color_index = color_index;
         this.id = id;
         this.last_name = last_name;
@@ -224,6 +232,7 @@ class Response{
         this.followers = followers;
         this.phone_number = phone_number;
         this.counters = counters;
+        this.is_closed = is_closed;
     }
 }
 
