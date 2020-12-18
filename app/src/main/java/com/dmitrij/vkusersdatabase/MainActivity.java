@@ -2,6 +2,8 @@ package com.dmitrij.vkusersdatabase;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -48,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
     class CountTask extends AsyncTask<Integer, Integer, Void> {
 
 
+        @SuppressLint("ResourceType")
         public  Response getInfoByID(int userID) throws JSONException {
             try {
                 URL url = new URL("https://api.vk.com/method/users.get?user_ids=" + userID + "&fields=counters,bdate,sex,last_seen,city,has_photo,interests,counters,contacts,education&access_token=" + key + "&v=5.126");
@@ -215,8 +218,12 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+            if(is_closed = true) color_index = R.drawable.blue;
+            else if((age < 16 || age > 100) || friends == 0 || photo == "НЕТ" || first_name == "DELETED") color_index = R.drawable.red;
+            else color_index = R.drawable.green;
 
-            response = new Response(0, id, last_name, first_name, sex, age, adress, last_seen_time, education, photo, interests, groups, friends, followers, phone_number, is_closed);
+
+            response = new Response(color_index, id, last_name, first_name, sex, age, adress, last_seen_time, education, photo, interests, groups, friends, followers, phone_number, is_closed);
 
             return  response;
 
@@ -226,7 +233,7 @@ public class MainActivity extends AppCompatActivity {
             for (int userID: users){
                 try {
                     //db.insertRecord(getInfoByID(userID).first_name, getInfoByID(userID).last_name);
-                    Log.d("TAGA", getInfoByID(userID).id + " " + getInfoByID(userID).last_name + " " + getInfoByID(userID).first_name + " " + getInfoByID(userID).sex + " " + getInfoByID(userID).age + " " + getInfoByID(userID).city + " " + getInfoByID(userID).last_seen + " " + getInfoByID(userID).education + " " + getInfoByID(userID).has_photo + " " + getInfoByID(userID).interests +  " " + getInfoByID(userID).phone_number + " " +getInfoByID(userID).is_closed + " " + getInfoByID(userID).followers + " " + getInfoByID(userID).friends + " " + getInfoByID(userID).groups);
+                    Log.d("TAGA", String.valueOf(getInfoByID(userID).color_index));
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
