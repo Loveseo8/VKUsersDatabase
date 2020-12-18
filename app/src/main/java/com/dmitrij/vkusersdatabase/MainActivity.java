@@ -12,6 +12,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -35,6 +36,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -46,8 +48,8 @@ public class MainActivity extends AppCompatActivity {
     Button button_insert;
     Button button_show;
     Button button_search;
+    Button button_sort;
     ArrayList<String> res = new ArrayList<>();
-    private ProgressDialog progressDialog = null;
 
 
     class VKTask extends AsyncTask<Integer, Integer, Void> {
@@ -133,7 +135,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
 
-            if(first_name != "DELETED") {
+            if (first_name != "DELETED") {
 
 
                 if (adress != "") {
@@ -170,7 +172,7 @@ public class MainActivity extends AppCompatActivity {
 
                     }
                 }
-                
+
                 int duration = 0;
 
                 if (last_seen != "") {
@@ -220,7 +222,7 @@ public class MainActivity extends AppCompatActivity {
 
                 }
 
-                if(json != null) {
+                if (json != null) {
 
                     JSONObject ree = new JSONObject(json).getJSONObject("response");
                     friends = ree.getInt("count");
@@ -254,10 +256,10 @@ public class MainActivity extends AppCompatActivity {
                 else if (friends == 0 || photo == "НЕТ" || duration >= 1)
                     color_index = "красный";
 
-                else if(age != "" && (Integer.parseInt(age) < 16 || Integer.parseInt(age) > 100)) color_index = "красный";
+                else if (age != "" && (Integer.parseInt(age) < 16 || Integer.parseInt(age) > 100))
+                    color_index = "красный";
                 else color_index = "зелёный";
-            }
-            else color_index = "красный";
+            } else color_index = "красный";
 
 
             response = new Response(color_index, id, last_name, first_name, sex, age, adress, last_seen, education, photo, interests, groups, friends, followers, phone_number, is_closed);
@@ -274,18 +276,19 @@ public class MainActivity extends AppCompatActivity {
                     res = db.getRecords();
                     int count = 0;
 
-                    for(int i = 0; i < res.size(); i++){
+                    for (int i = 0; i < res.size(); i++) {
 
-                        String []ids  = res.get(i).split("   ");
+                        String[] ids = res.get(i).split("   ");
 
-                        if(ids[2].contains(String.valueOf(userID))){
+                        if (ids[2].contains(String.valueOf(userID))) {
 
                             count++;
                         }
 
                     }
 
-                    if(count == 0) db.insertRecord(getInfoByID(userID).color_index, getInfoByID(userID).id, getInfoByID(userID).last_name, getInfoByID(userID).first_name, getInfoByID(userID).sex, getInfoByID(userID).age, getInfoByID(userID).city, getInfoByID(userID).last_seen, getInfoByID(userID).education, getInfoByID(userID).has_photo, getInfoByID(userID).interests, getInfoByID(userID).groups, getInfoByID(userID).friends, getInfoByID(userID).followers, getInfoByID(userID).phone_number);
+                    if (count == 0)
+                        db.insertRecord(getInfoByID(userID).color_index, getInfoByID(userID).id, getInfoByID(userID).last_name, getInfoByID(userID).first_name, getInfoByID(userID).sex, getInfoByID(userID).age, getInfoByID(userID).city, getInfoByID(userID).last_seen, getInfoByID(userID).education, getInfoByID(userID).has_photo, getInfoByID(userID).interests, getInfoByID(userID).groups, getInfoByID(userID).friends, getInfoByID(userID).followers, getInfoByID(userID).phone_number);
 
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -317,7 +320,44 @@ public class MainActivity extends AppCompatActivity {
         button_insert = findViewById(R.id.button_insert);
         button_show = findViewById(R.id.button_show);
         button_search = findViewById(R.id.button_search);
+        button_sort = findViewById(R.id.button_sort);
 
+
+        button_sort.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                ArrayList<String> a = new ArrayList<>();
+
+                res = db.getRecords();
+                a = (ArrayList<String>) res.stream().filter(s -> s.contains("М")).collect(Collectors.toList());
+
+
+                tableLayout.removeViews(1, tableLayout.getChildCount() - 1);
+
+
+                for (int i = 0; i < a.size(); i++) {
+
+                    TableRow row = new TableRow(getApplicationContext());
+                    row.setLayoutParams(new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT,
+                            TableLayout.LayoutParams.WRAP_CONTENT));
+                    String[] colText = a.get(i).split("   ");
+                    for (String text : colText) {
+                        TextView tv = new TextView(getApplicationContext());
+                        tv.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT,
+                                TableRow.LayoutParams.WRAP_CONTENT));
+                        tv.setGravity(Gravity.CENTER);
+                        tv.setTextSize(16);
+                        tv.setPadding(5, 5, 5, 5);
+                        tv.setText(text);
+                        row.addView(tv);
+                    }
+                    tableLayout.addView(row);
+
+                }
+
+            }
+        });
 
 
         button_insert.setOnClickListener(new View.OnClickListener() {
@@ -340,27 +380,16 @@ public class MainActivity extends AppCompatActivity {
 
                 String str = enter_id.getText().toString();
 
-                if(str != null) {
+                if (str != null) {
 
                     ArrayList<String> search = new ArrayList<>();
 
                     res = db.getRecords();
-                    for (int i = 0; i < res.size(); i++) {
-
-                        String[] user = res.get(i).split("   ");
-
-                        for (int f = 0; f < user.length; f++) {
-
-                            if (user[f].contains(str)) search.add(res.get(i));
-
-                        }
-
-                    }
+                    search = (ArrayList<String>) res.stream().filter(s -> s.contains(str)).collect(Collectors.toList());
 
                     enter_id.setText("");
 
                     if (search.size() > 0) {
-
 
                         for (int i = 0; i < search.size(); i++) {
 
@@ -423,27 +452,8 @@ public class MainActivity extends AppCompatActivity {
         });
 
         tableLayout = (TableLayout) findViewById(R.id.tablelayout);
-
-        TableRow rowHeader = new TableRow(getApplicationContext());
-        rowHeader.setBackgroundColor(Color.parseColor("#c0c0c0"));
-        rowHeader.setLayoutParams(new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT,
-                TableLayout.LayoutParams.WRAP_CONTENT));
-        String[] headerText = {"№", "Индекс(цвет)", "id человека", "Фамилия", "Имя", "Пол", "Возраст", "Город Проживания", "Когда был в сети", "Образование", "Есть фотографии", "Интересы", "Число Сообществ", "Число друзей", "Число подписчиков", "Телефон"};
-        for (String c : headerText) {
-            TextView tv = new TextView(this);
-            tv.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT,
-                    TableRow.LayoutParams.WRAP_CONTENT));
-            tv.setGravity(Gravity.CENTER);
-            tv.setTextSize(18);
-            tv.setPadding(5, 5, 5, 5);
-            tv.setText(c);
-            rowHeader.addView(tv);
-        }
-        tableLayout.addView(rowHeader);
-
-
+        
     }
-
 }
 
 class Response{

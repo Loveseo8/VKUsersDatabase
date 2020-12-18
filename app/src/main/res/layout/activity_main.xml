@@ -37,6 +37,13 @@ android:layout_height="match_parent">
                 android:layout_margin="5dp"/>
 
             <Button
+                android:id="@+id/button_sort"
+                android:text="INSERT"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"/>
+
+            <Button
                 android:id="@+id/button_show"
                 android:text="SHOW"
                 android:layout_width="wrap_content"
@@ -56,9 +63,111 @@ android:layout_height="match_parent">
             android:layout_width= "match_parent"
             android:layout_height= "wrap_content"
             android:stretchColumns="*">
+
+            <TableRow
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:background="#c0c0c0">
+
+                <TextView
+                    android:text="№"
+                    android:gravity="center"
+                    android:textSize="18dp"
+                    android:padding="5dp" />
+
+                <TextView
+                    android:text="Индекс(цвет)"
+                    android:gravity="center"
+                    android:textSize="18dp"
+                    android:padding="5dp" />
+
+                <TextView
+                    android:text="id человека"
+                    android:gravity="center"
+                    android:textSize="18dp"
+                    android:padding="5dp" />
+
+                <TextView
+                    android:text="Фамилия"
+                    android:gravity="center"
+                    android:textSize="18dp"
+                    android:padding="5dp" />
+
+                <TextView
+                    android:text="Имя"
+                    android:gravity="center"
+                    android:textSize="18dp"
+                    android:padding="5dp" />
+
+                <TextView
+                    android:text="Пол"
+                    android:gravity="center"
+                    android:textSize="18dp"
+                    android:padding="5dp" />
+
+                <TextView
+                    android:text="Возраст"
+                    android:gravity="center"
+                    android:textSize="18dp"
+                    android:padding="5dp" />
+
+                <TextView
+                    android:text="Город Проживания"
+                    android:gravity="center"
+                    android:textSize="18dp"
+                    android:padding="5dp" />
+
+                <TextView
+                    android:text="Когда был в сети"
+                    android:gravity="center"
+                    android:textSize="18dp"
+                    android:padding="5dp" />
+
+                <TextView
+                    android:text="Образование"
+                    android:gravity="center"
+                    android:textSize="18dp"
+                    android:padding="5dp" />
+
+                <TextView
+                    android:text="Есть фотографии"
+                    android:gravity="center"
+                    android:textSize="18dp"
+                    android:padding="5dp" />
+
+                <TextView
+                    android:text="Интересы"
+                    android:gravity="center"
+                    android:textSize="18dp"
+                    android:padding="5dp" />
+
+                <TextView
+                    android:text="Число Сообществ"
+                    android:gravity="center"
+                    android:textSize="18dp"
+                    android:padding="5dp" />
+
+                <TextView
+                    android:text="Число друзей"
+                    android:gravity="center"
+                    android:textSize="18dp"
+                    android:padding="5dp" />
+
+                <TextView
+                    android:text="Число подписчиков"
+                    android:gravity="center"
+                    android:textSize="18dp"
+                    android:padding="5dp" />
+
+                <TextView
+                    android:text="Телефон"
+                    android:gravity="center"
+                    android:textSize="18dp"
+                    android:padding="5dp" />
+
+
+            </TableRow>
         </TableLayout>
-
-
 
     </LinearLayout>
 
