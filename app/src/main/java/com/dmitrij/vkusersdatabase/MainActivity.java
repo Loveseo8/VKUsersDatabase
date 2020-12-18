@@ -324,14 +324,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                ProgressDialog myDialog = ProgressDialog.show(MainActivity.this, "Важная информация","снизу...", true);
-                myDialog.getWindow().setGravity(Gravity.CENTER_HORIZONTAL);
 
                 Random rn = new Random();
                 VKTask task = new VKTask();
                 task.execute(rn.nextInt(630000000) + 1, rn.nextInt(630000000) + 1, rn.nextInt(630000000) + 1, rn.nextInt(630000000) + 1, rn.nextInt(630000000) + 1, rn.nextInt(630000000) + 1, rn.nextInt(630000000) + 1, rn.nextInt(630000000) + 1, rn.nextInt(630000000) + 1);
 
-                myDialog.dismiss();
             }
         });
 
