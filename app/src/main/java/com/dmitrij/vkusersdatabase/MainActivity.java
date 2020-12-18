@@ -45,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
     EditText enter_id;
     Button button_insert;
     Button button_show;
+    Button button_search;
     ArrayList<String> res = new ArrayList<>();
     private ProgressDialog progressDialog = null;
 
@@ -219,8 +220,12 @@ public class MainActivity extends AppCompatActivity {
 
                 }
 
-                JSONObject ree = new JSONObject(json).getJSONObject("response");
-                friends = ree.getInt("count");
+                if(json != null) {
+
+                    JSONObject ree = new JSONObject(json).getJSONObject("response");
+                    friends = ree.getInt("count");
+
+                }
 
 
                 if (photos > 0) photo = "ДА";
@@ -311,7 +316,7 @@ public class MainActivity extends AppCompatActivity {
         enter_id = findViewById(R.id.enter_id);
         button_insert = findViewById(R.id.button_insert);
         button_show = findViewById(R.id.button_show);
-
+        button_search = findViewById(R.id.button_search);
 
 
 
@@ -329,6 +334,59 @@ public class MainActivity extends AppCompatActivity {
                 myDialog.dismiss();
             }
         });
+
+        button_search.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                tableLayout.removeViews(1, tableLayout.getChildCount() - 1);
+
+                String str = enter_id.getText().toString();
+
+                if(str != null) {
+
+                    ArrayList<String> search = new ArrayList<>();
+
+                    res = db.getRecords();
+                    for (int i = 0; i < res.size(); i++) {
+
+                        String[] user = res.get(i).split("   ");
+
+                        for (int f = 0; f < user.length; f++) {
+
+                            if (user[f].contains(str)) search.add(res.get(i));
+
+                        }
+
+                    }
+
+
+                    for (int i = 0; i < search.size(); i++) {
+
+
+                        TableRow row = new TableRow(getApplicationContext());
+                        row.setLayoutParams(new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT,
+                                TableLayout.LayoutParams.WRAP_CONTENT));
+                        String[] colText = search.get(i).split("   ");
+                        for (String text : colText) {
+                            TextView tv = new TextView(getApplicationContext());
+                            tv.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT,
+                                    TableRow.LayoutParams.WRAP_CONTENT));
+                            tv.setGravity(Gravity.CENTER);
+                            tv.setTextSize(16);
+                            tv.setPadding(5, 5, 5, 5);
+                            tv.setText(text);
+                            row.addView(tv);
+                        }
+                        tableLayout.addView(row);
+
+                    }
+
+                }
+
+            }
+        });
+
 
         button_show.setOnClickListener(new View.OnClickListener() {
             @Override

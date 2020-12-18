@@ -16,6 +16,7 @@ android:layout_height="match_parent">
         android:gravity="center">
 
         <EditText
+            android:hint="search"
             android:id="@+id/enter_id"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -38,6 +39,12 @@ android:layout_height="match_parent">
             <Button
                 android:id="@+id/button_show"
                 android:text="SHOW"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"/>
+            <Button
+                android:id="@+id/button_search"
+                android:text="SEARCH"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"/>
