@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
     class CountTask extends AsyncTask<Integer, Integer, Void> {
 
 
-        public Response getInfoByID(int userID) throws JSONException {
+        public  Response getInfoByID(int userID) throws JSONException {
             try {
                 URL url = new URL("https://api.vk.com/method/users.get?user_ids=" + userID + "&fields=counters,bdate,sex,last_seen,city,has_photo,interests,counters,contacts,education&access_token=" + key + "&v=5.126");
                 URLConnection yc = url.openConnection();
@@ -63,14 +63,14 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
 
             }
-            
+
             Response response = null;
 
             int color_index = 0;
             int id = 0;
             String last_name = null;
             String first_name = null;
-            int sex = 0;
+            int gender = 0;
             String university_name = null;
             String faculty_name = null;
             String bdate = null;
@@ -80,12 +80,13 @@ public class MainActivity extends AppCompatActivity {
             int has_photo = 0;
             String interests = null;
             int groups = 0;
-            int pages = 0;
             int friends = 0;
             int followers = 0;
             String phone_number = null;
             String counters = null;
             boolean is_closed = false;
+            String sex = null;
+            int age = 0;
 
             JSONObject reader = new JSONObject(json);
             JSONArray jsonArray = reader.getJSONArray("response");
@@ -99,7 +100,19 @@ public class MainActivity extends AppCompatActivity {
                     last_name = jsonObject.getString("last_name");
                     first_name = jsonObject.getString("first_name");
                     bdate = jsonObject.getString("bdate");
-                    sex = jsonObject.getInt("sex");
+                    gender = jsonObject.getInt("sex");
+
+                }catch (JSONException e){
+
+                }
+            }
+
+            for(int i = 0; i < jsonArray.length(); i++){
+                try{
+
+                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+
+                    counters = jsonObject.getString("counters");
                     adress = jsonObject.getString("city");
                     last_seen = jsonObject.getString("last_seen");
                     university_name = jsonObject.getString("university_name");
@@ -114,23 +127,13 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
 
-            for(int i = 0; i < jsonArray.length(); i++){
-                try{
 
-                    JSONObject jsonObject = jsonArray.getJSONObject(i);
-
-                    counters = jsonObject.getString("counters");
-
-                }catch (JSONException e){
-
-                }
-            }
 
             JSONObject read = new JSONObject(adress);
             adress = read.getString("title");
 
-            read = new JSONObject(last_seen);
-            int time = read.getInt("time");
+            JSONObject d = new JSONObject(last_seen);
+            int time = d.getInt("time");
 
             Date lst = new Date((long)time*1000);
 
@@ -143,28 +146,79 @@ public class MainActivity extends AppCompatActivity {
 
                 LocalDate birthdate = new LocalDate(Integer.parseInt(bday[2]), Integer.parseInt(bday[1]), Integer.parseInt(bday[0]));
                 LocalDate now = new LocalDate();
-                Years age = Years.yearsBetween(birthdate, now);
+                Years years = Years.yearsBetween(birthdate, now);
 
-                String agee = age.toString();
+                String agee = years.toString().replaceAll("P", "").replaceAll("Y", "");
 
-                bdate = agee;
+                age = Integer.parseInt(agee);
 
             }
 
 
             JSONObject r = new JSONObject(counters);
             followers = r.getInt("followers");
-            pages = r.getInt("pages");
-
-            //friends = r.getInt("friends");
 
             if(university_name != "") education = university_name;
-            if(faculty_name != "") education += " " + faculty_name;
+            else if(faculty_name != "" && university_name != "") education = university_name +  ",  " + faculty_name;
+            if(education == null) education = "-";
 
-            response = new Response(0, id, last_name, first_name, sex, bdate, adress, last_seen_time, education.trim(), has_photo, interests, pages, friends, followers, phone_number, counters, is_closed);
-            
+            if(gender == 1) sex = "Ж";
+            else if(gender == 2) sex = "М";
+            else sex = "-";
 
-            return response;
+
+            try {
+                URL url = new URL("https://api.vk.com/method/friends.get?user_id=" + userID + "&access_token=" + key + "&v=5.126");
+                URLConnection yc = url.openConnection();
+                yc.connect();
+                BufferedReader buffIn = new BufferedReader(new InputStreamReader(yc.getInputStream()));
+                String inputLine;
+                while ((inputLine = buffIn.readLine()) != null) json = (inputLine);
+                buffIn.close();
+
+            } catch (IOException | NullPointerException e) {
+
+                e.printStackTrace();
+
+            }
+
+            JSONObject ree = new JSONObject(json).getJSONObject("response");
+            friends = ree.getInt("count");
+
+            String photo;
+
+            if(has_photo == 1) photo = "ДА";
+            else  photo = "НЕТ";
+
+            if(interests == null || interests == " ") interests = "-";
+
+            try {
+                URL url = new URL("https://api.vk.com/method/users.getSubscriptions?user_id=" + userID + "&access_token=" + key + "&v=5.126");
+                URLConnection yc = url.openConnection();
+                yc.connect();
+                BufferedReader buffIn = new BufferedReader(new InputStreamReader(yc.getInputStream()));
+                String inputLine;
+                while ((inputLine = buffIn.readLine()) != null) json = (inputLine);
+                buffIn.close();
+
+            } catch (IOException | NullPointerException e) {
+
+                e.printStackTrace();
+
+            }
+            String countGroups;
+
+            JSONObject l = new JSONObject(json).getJSONObject("response").getJSONObject("groups");
+            groups = l.getInt("count");
+
+            if(phone_number == null) phone_number = "-";
+
+
+
+
+            response = new Response(0, id, last_name, first_name, sex, age, adress, last_seen_time, education, photo, interests, groups, friends, followers, phone_number, is_closed);
+
+            return  response;
 
         }
         @Override
@@ -172,7 +226,7 @@ public class MainActivity extends AppCompatActivity {
             for (int userID: users){
                 try {
                     //db.insertRecord(getInfoByID(userID).first_name, getInfoByID(userID).last_name);
-                    Log.d("TAGA", getInfoByID(userID).id + " " + getInfoByID(userID).last_name + " " + getInfoByID(userID).first_name + " " + getInfoByID(userID).sex + " " + getInfoByID(userID).bdate + " " + getInfoByID(userID).adress + " " + getInfoByID(userID).last_seen + " " + getInfoByID(userID).education + " " + getInfoByID(userID).has_photo + " " + getInfoByID(userID).interests +  " " + getInfoByID(userID).phone_number + " " +getInfoByID(userID).is_closed + " " + getInfoByID(userID).followers + " " + getInfoByID(userID).friends + " " + getInfoByID(userID).groups + " " + getInfoByID(userID).counters);
+                    Log.d("TAGA", getInfoByID(userID).id + " " + getInfoByID(userID).last_name + " " + getInfoByID(userID).first_name + " " + getInfoByID(userID).sex + " " + getInfoByID(userID).age + " " + getInfoByID(userID).city + " " + getInfoByID(userID).last_seen + " " + getInfoByID(userID).education + " " + getInfoByID(userID).has_photo + " " + getInfoByID(userID).interests +  " " + getInfoByID(userID).phone_number + " " +getInfoByID(userID).is_closed + " " + getInfoByID(userID).followers + " " + getInfoByID(userID).friends + " " + getInfoByID(userID).groups);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -231,31 +285,30 @@ class Response{
     int id;
     String last_name;
     String first_name;
-    int sex;
-    String bdate;
-    String adress;
+    String sex;
+    int age;
+    String city;
     String last_seen;
     String education;
-    int has_photo;
+    String has_photo;
     String interests;
     int groups;
     int friends;
     int followers;
     String phone_number;
-    String counters;
     boolean is_closed;
 
-    //НА СТРАНИЦАХ ПОЛЬЗОВАТЕЛЕЙ НЕ ОТОБРАЖАЕТСЯ АДРЕС ЭЛЕКТРОННОЙ ПОЧТЫ И МЕТОД ДЛЯ ЕЁ ПОЛУЧЕНИЯ ОТСУТВУЕТ У VK api
+    //НА СТРАНИЦАХ ПОЛЬЗОВАТЕЛЕЙ НЕ ОТОБРАЖАЕТСЯ АДРЕС ЭЛЕКТРОННОЙ ПОЧТЫ И ОПЫТ РАБОТЫ. МЕТОДОВ ДЛЯ ПОЛУЧЕНИЯ ЭТИХ ДАННЫХ ОТСУТВУЮТ У VK api
 
 
-    public Response(int color_index, int id, String last_name, String first_name, int sex, String bdate, String adress, String last_seen, String education, int has_photo, String interests, int groups, int friends, int followers, String phone_number, String counters, boolean is_closed) {
+    public Response(int color_index, int id, String last_name, String first_name, String sex, int age, String city, String last_seen, String education, String has_photo, String interests, int groups, int friends, int followers, String phone_number, boolean is_closed) {
         this.color_index = color_index;
         this.id = id;
         this.last_name = last_name;
         this.first_name = first_name;
         this.sex = sex;
-        this.bdate = bdate;
-        this.adress = adress;
+        this.age = age;
+        this.city = city;
         this.last_seen = last_seen;
         this.education = education;
         this.has_photo = has_photo;
@@ -264,7 +317,6 @@ class Response{
         this.friends = friends;
         this.followers = followers;
         this.phone_number = phone_number;
-        this.counters = counters;
         this.is_closed = is_closed;
     }
 }
