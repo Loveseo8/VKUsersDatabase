@@ -1,9 +1,6 @@
 package com.dmitrij.vkusersdatabase;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.annotation.SuppressLint;
-import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,10 +9,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import androidx.appcompat.app.AppCompatActivity;
 
 import org.joda.time.LocalDate;
 import org.joda.time.Years;
@@ -25,14 +19,11 @@ import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
@@ -232,8 +223,7 @@ public class MainActivity extends AppCompatActivity {
         protected Void doInBackground(Integer... users) {
             for (int userID: users){
                 try {
-                    //db.insertRecord(getInfoByID(userID).first_name, getInfoByID(userID).last_name);
-                    Log.d("TAGA", String.valueOf(getInfoByID(userID).color_index));
+                    db.insertRecord(getInfoByID(userID).color_index, getInfoByID(userID).id, getInfoByID(userID).last_name, getInfoByID(userID).first_name, getInfoByID(userID).sex, getInfoByID(userID).age, getInfoByID(userID).city, getInfoByID(userID).last_seen, getInfoByID(userID).education, getInfoByID(userID).has_photo, getInfoByID(userID).interests, getInfoByID(userID).groups, getInfoByID(userID).friends, getInfoByID(userID).followers, getInfoByID(userID).phone_number);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
