@@ -278,7 +278,7 @@ public class MainActivity extends AppCompatActivity {
 
                         String []ids  = res.get(i).split("   ");
 
-                        if(ids[2] == String.valueOf(userID)){
+                        if(ids[2].contains(String.valueOf(userID))){
 
                             count++;
                         }
@@ -357,28 +357,33 @@ public class MainActivity extends AppCompatActivity {
 
                     }
 
+                    enter_id.setText("");
 
-                    for (int i = 0; i < search.size(); i++) {
+                    if (search.size() > 0) {
 
 
-                        TableRow row = new TableRow(getApplicationContext());
-                        row.setLayoutParams(new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT,
-                                TableLayout.LayoutParams.WRAP_CONTENT));
-                        String[] colText = search.get(i).split("   ");
-                        for (String text : colText) {
-                            TextView tv = new TextView(getApplicationContext());
-                            tv.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT,
-                                    TableRow.LayoutParams.WRAP_CONTENT));
-                            tv.setGravity(Gravity.CENTER);
-                            tv.setTextSize(16);
-                            tv.setPadding(5, 5, 5, 5);
-                            tv.setText(text);
-                            row.addView(tv);
+                        for (int i = 0; i < search.size(); i++) {
+
+
+                            TableRow row = new TableRow(getApplicationContext());
+                            row.setLayoutParams(new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT,
+                                    TableLayout.LayoutParams.WRAP_CONTENT));
+                            String[] colText = search.get(i).split("   ");
+                            for (String text : colText) {
+                                TextView tv = new TextView(getApplicationContext());
+                                tv.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT,
+                                        TableRow.LayoutParams.WRAP_CONTENT));
+                                tv.setGravity(Gravity.CENTER);
+                                tv.setTextSize(16);
+                                tv.setPadding(5, 5, 5, 5);
+                                tv.setText(text);
+                                row.addView(tv);
+                            }
+                            tableLayout.addView(row);
+
                         }
-                        tableLayout.addView(row);
 
                     }
-
                 }
 
             }
@@ -388,6 +393,10 @@ public class MainActivity extends AppCompatActivity {
         button_show.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                tableLayout.removeViews(1, tableLayout.getChildCount() - 1);
+
+                res.clear();
 
                 res = db.getRecords();
                 for (int i = 0; i < res.size(); i++) {
