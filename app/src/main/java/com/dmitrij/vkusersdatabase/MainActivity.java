@@ -7,6 +7,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -27,9 +28,13 @@ import java.net.URLConnection;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Random;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 public class MainActivity extends AppCompatActivity {
@@ -199,6 +204,7 @@ public class MainActivity extends AppCompatActivity {
 
                 if (gender == 1) sex = "Ж";
                 else if (gender == 2) sex = "М";
+                else sex = "не указан";
 
 
                 try {
@@ -316,44 +322,670 @@ public class MainActivity extends AppCompatActivity {
         button_search = findViewById(R.id.button_search);
         button_sort = findViewById(R.id.button_sort);
 
+        Spinner spinner_color = findViewById(R.id.spinner_color);
+        Spinner spinner_id = findViewById(R.id.spinner_id);
+        Spinner spinner_last_name = findViewById(R.id.spinner_last_name);
+        Spinner spinner_first_name = findViewById(R.id.spinner_first_name);
+        Spinner spinner_sex = findViewById(R.id.spinner_sex);
+        Spinner spinner_age = findViewById(R.id.spinner_age);
+        Spinner spinner_city = findViewById(R.id.spinner_city);
+        Spinner spinner_last_seen = findViewById(R.id.spinner_last_seen);
+        Spinner spinner_education = findViewById(R.id.spinner_education);
+        Spinner spinner_photo = findViewById(R.id.spinner_photo);
+        Spinner spinner_interests = findViewById(R.id.spinner_interests);
+        Spinner spinner_groups = findViewById(R.id.spinner_groups);
+        Spinner spinner_friends = findViewById(R.id.spinner_friends);
+        Spinner spinner_followers = findViewById(R.id.spinner_followers);
+        Spinner spinner_phone = findViewById(R.id.spinner_phone);
+
+
+
         tableLayout = (TableLayout) findViewById(R.id.tablelayout);
 
 
         button_sort.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+                                           @Override
+                                           public void onClick(View view) {
 
 
-                    ArrayList<String> a = new ArrayList<>();
+                                               ArrayList<String> a = new ArrayList<>();
 
-                    res = db.getRecords();
-                    a = (ArrayList<String>) res.stream().filter(s -> s.contains("М")).collect(Collectors.toList());
+                                               res = db.getRecords();
+
+                                               if (spinner_color.getSelectedItemPosition() != 0) {
+
+                                                   if (spinner_color.getSelectedItemPosition() == 1)
+                                                       a = (ArrayList<String>) res.stream().filter(s -> s.contains("красный")).collect(Collectors.toList());
+                                                   if (spinner_color.getSelectedItemPosition() == 2)
+                                                       a = (ArrayList<String>) res.stream().filter(s -> s.contains("зелёный")).collect(Collectors.toList());
+                                                   if (spinner_color.getSelectedItemPosition() == 3)
+                                                       a = (ArrayList<String>) res.stream().filter(s -> s.contains("синий")).collect(Collectors.toList());
+
+                                               } else if (spinner_sex.getSelectedItemPosition() != 0) {
+
+                                                   if (spinner_sex.getSelectedItemPosition() == 1)
+                                                       a = (ArrayList<String>) res.stream().filter(s -> s.contains("М")).collect(Collectors.toList());
+                                                   if (spinner_sex.getSelectedItemPosition() == 2)
+                                                       a = (ArrayList<String>) res.stream().filter(s -> s.contains("Ж")).collect(Collectors.toList());
+                                                   if (spinner_sex.getSelectedItemPosition() == 3)
+                                                       a = (ArrayList<String>) res.stream().filter(s -> s.contains("не указан")).collect(Collectors.toList());
+
+                                               } else if (spinner_photo.getSelectedItemPosition() != 0) {
+
+                                                   if (spinner_photo.getSelectedItemPosition() == 1)
+                                                       a = (ArrayList<String>) res.stream().filter(s -> s.contains("ДА")).collect(Collectors.toList());
+                                                   if (spinner_photo.getSelectedItemPosition() == 2)
+                                                       a = (ArrayList<String>) res.stream().filter(s -> s.contains("НЕТ")).collect(Collectors.toList());
+
+                                               } else if (spinner_id.getSelectedItemPosition() != 0) {
+
+                                                   if (spinner_id.getSelectedItemPosition() == 1) {
+
+                                                       Map<Integer, Integer> Info = new TreeMap<>();
+
+                                                       for (int i = 0; i < res.size(); i++) {
+
+                                                           String[] line = res.get(i).split("   ");
+                                                           int id = Integer.parseInt(line[2]);
+
+                                                           Info.put(id, i);
+
+                                                       }
+
+                                                       for (Map.Entry<Integer, Integer> entry : Info.entrySet()) {
+
+                                                           a.add(res.get(entry.getValue()));
+
+                                                       }
+
+                                                   } else if (spinner_id.getSelectedItemPosition() == 2) {
+
+                                                       Map<Integer, Integer> Info = new TreeMap<>(Collections.reverseOrder());
+
+                                                       for (int i = 0; i < res.size(); i++) {
+
+                                                           String[] line = res.get(i).split("   ");
+                                                           int id = Integer.parseInt(line[2]);
+
+                                                           Info.put(id, i);
+
+                                                       }
+
+                                                       for (Map.Entry<Integer, Integer> entry : Info.entrySet()) {
+
+                                                           a.add(res.get(entry.getValue()));
+
+                                                       }
+
+                                                   }
+                                               } else if (spinner_first_name.getSelectedItemPosition() != 0) {
+
+                                                   if (spinner_first_name.getSelectedItemPosition() == 1) {
+
+                                                       Map<Integer, String> Info = new TreeMap<>();
+
+                                                       for (int i = 0; i < res.size(); i++) {
+
+                                                           String[] line = res.get(i).split("   ");
+                                                           String name = line[4];
+
+                                                           Info.put(i, name);
+
+                                                       }
+
+                                                       Info = valueSortInOrder(Info);
+
+                                                       for (Map.Entry<Integer, String> entry : Info.entrySet()) {
+
+                                                           a.add(res.get(entry.getKey()));
+
+                                                       }
+
+                                                   } else if (spinner_first_name.getSelectedItemPosition() == 2) {
+
+                                                       Map<Integer, String> Info = new TreeMap<>();
+
+                                                       for (int i = 0; i < res.size(); i++) {
+
+                                                           String[] line = res.get(i).split("   ");
+                                                           String name = line[4];
+
+                                                           Info.put(i, name);
+
+                                                       }
+
+                                                       Info = valueSortReorder(Info);
+
+                                                       for (Map.Entry<Integer, String> entry : Info.entrySet()) {
+
+                                                           a.add(res.get(entry.getKey()));
+
+                                                       }
+
+                                                   }
+                                               } else if (spinner_last_name.getSelectedItemPosition() != 0) {
+
+                                                   if (spinner_last_name.getSelectedItemPosition() == 1) {
+
+                                                       Map<Integer, String> Info = new TreeMap<>();
+
+                                                       for (int i = 0; i < res.size(); i++) {
+
+                                                           String[] line = res.get(i).split("   ");
+                                                           String name = line[3];
+
+                                                           Info.put(i, name);
+
+                                                       }
+
+                                                       Info = valueSortInOrder(Info);
+
+                                                       for (Map.Entry<Integer, String> entry : Info.entrySet()) {
+
+                                                           a.add(res.get(entry.getKey()));
+
+                                                       }
+
+                                                   } else if (spinner_last_name.getSelectedItemPosition() == 2) {
+
+                                                       Map<Integer, String> Info = new TreeMap<>();
+
+                                                       for (int i = 0; i < res.size(); i++) {
+
+                                                           String[] line = res.get(i).split("   ");
+                                                           String name = line[3];
+
+                                                           Info.put(i, name);
+
+                                                       }
+
+                                                       Info = valueSortReorder(Info);
+
+                                                       for (Map.Entry<Integer, String> entry : Info.entrySet()) {
+
+                                                           a.add(res.get(entry.getKey()));
+
+                                                       }
+
+                                                   }
+                                               } else if (spinner_age.getSelectedItemPosition() != 0) {
+
+                                                   if (spinner_age.getSelectedItemPosition() == 1) {
+
+                                                       Map<Integer, Integer> Info = new TreeMap<>();
+
+                                                       for (int i = 0; i < res.size(); i++) {
+
+                                                           String[] line = res.get(i).split("   ");
+
+                                                           if (!line[6].equals("")) {
+                                                               int name = Integer.parseInt(line[6]);
+
+                                                               Info.put(i, name);
+
+                                                           }
+                                                       }
+
+                                                       Info = valueSortInOrder(Info);
+
+                                                       for (Map.Entry<Integer, Integer> entry : Info.entrySet()) {
+
+                                                           a.add(res.get(entry.getKey()));
+
+                                                       }
+
+                                                   } else if (spinner_age.getSelectedItemPosition() == 2) {
+
+                                                       Map<Integer, Integer> Info = new TreeMap<>();
+
+                                                       for (int i = 0; i < res.size(); i++) {
+
+                                                           String[] line = res.get(i).split("   ");
+                                                           if (!line[6].equals("")) {
+                                                               int name = Integer.parseInt(line[6]);
+
+                                                               Info.put(i, name);
+
+                                                           }
+                                                       }
+
+                                                       Info = valueSortReorder(Info);
+
+                                                       for (Map.Entry<Integer, Integer> entry : Info.entrySet()) {
+
+                                                           a.add(res.get(entry.getKey()));
 
 
-                    tableLayout.removeViews(2, tableLayout.getChildCount() - 2);
+                                                       }
+                                                   }
+                                               } else if (spinner_city.getSelectedItemPosition() != 0) {
+
+                                                   if (spinner_city.getSelectedItemPosition() == 1) {
+
+                                                       Map<Integer, String> Info = new TreeMap<>();
+
+                                                       for (int i = 0; i < res.size(); i++) {
+
+                                                           String[] line = res.get(i).split("   ");
+
+                                                           if (!line[7].equals("")) {
+                                                               String name = line[7];
+
+                                                               Info.put(i, name);
+
+                                                           }
+                                                       }
+
+                                                       Info = valueSortInOrder(Info);
+
+                                                       for (Map.Entry<Integer, String> entry : Info.entrySet()) {
+
+                                                           a.add(res.get(entry.getKey()));
+
+                                                       }
+
+                                                   } else if (spinner_city.getSelectedItemPosition() == 2) {
+
+                                                       Map<Integer, String> Info = new TreeMap<>();
+
+                                                       for (int i = 0; i < res.size(); i++) {
+
+                                                           String[] line = res.get(i).split("   ");
+                                                           if (!line[7].equals("")) {
+                                                               String name = line[7];
+
+                                                               Info.put(i, name);
+
+                                                           }
+                                                       }
+
+                                                       Info = valueSortReorder(Info);
+
+                                                       for (Map.Entry<Integer, String> entry : Info.entrySet()) {
+
+                                                           a.add(res.get(entry.getKey()));
 
 
-                    for (int i = 0; i < a.size(); i++) {
+                                                       }
+                                                   }
+                                               } else if (spinner_last_seen.getSelectedItemPosition() != 0) {
 
-                        TableRow row = new TableRow(getApplicationContext());
-                        row.setLayoutParams(new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT,
-                                TableLayout.LayoutParams.WRAP_CONTENT));
-                        String[] colText = a.get(i).split("   ");
-                        for (String text : colText) {
-                            TextView tv = new TextView(getApplicationContext());
-                            tv.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT,
-                                    TableRow.LayoutParams.WRAP_CONTENT));
-                            tv.setGravity(Gravity.CENTER);
-                            tv.setTextSize(16);
-                            tv.setPadding(5, 5, 5, 5);
-                            tv.setText(text);
-                            row.addView(tv);
+                                                   if (spinner_last_seen.getSelectedItemPosition() == 1) {
+
+                                                       Map<Integer, String> Info = new TreeMap<>();
+
+                                                       for (int i = 0; i < res.size(); i++) {
+
+                                                           String[] line = res.get(i).split("   ");
+
+                                                           if (!line[8].equals("")) {
+                                                               String name = line[8];
+
+                                                               Info.put(i, name);
+
+                                                           }
+                                                       }
+
+                                                       Info = valueSortInOrder(Info);
+
+                                                       for (Map.Entry<Integer, String> entry : Info.entrySet()) {
+
+                                                           a.add(res.get(entry.getKey()));
+
+                                                       }
+
+                                                   } else if (spinner_last_seen.getSelectedItemPosition() == 2) {
+
+                                                       Map<Integer, String> Info = new TreeMap<>();
+
+                                                       for (int i = 0; i < res.size(); i++) {
+
+                                                           String[] line = res.get(i).split("   ");
+                                                           if (!line[8].equals("")) {
+                                                               String name = line[8];
+
+                                                               Info.put(i, name);
+
+                                                           }
+                                                       }
+
+                                                       Info = valueSortReorder(Info);
+
+                                                       for (Map.Entry<Integer, String> entry : Info.entrySet()) {
+
+                                                           a.add(res.get(entry.getKey()));
+
+
+                                                       }
+                                                   }
+                                               } else if (spinner_education.getSelectedItemPosition() != 0) {
+
+                                                   if (spinner_education.getSelectedItemPosition() == 1) {
+
+                                                       Map<Integer, String> Info = new TreeMap<>();
+
+                                                       for (int i = 0; i < res.size(); i++) {
+
+                                                           String[] line = res.get(i).split("   ");
+
+                                                           if (!line[9].equals("")) {
+                                                               String name = line[9];
+
+                                                               Info.put(i, name);
+
+                                                           }
+                                                       }
+
+                                                       Info = valueSortInOrder(Info);
+
+                                                       for (Map.Entry<Integer, String> entry : Info.entrySet()) {
+
+                                                           a.add(res.get(entry.getKey()));
+
+                                                       }
+
+                                                   } else if (spinner_education.getSelectedItemPosition() == 2) {
+
+                                                       Map<Integer, String> Info = new TreeMap<>();
+
+                                                       for (int i = 0; i < res.size(); i++) {
+
+                                                           String[] line = res.get(i).split("   ");
+                                                           if (!line[9].equals("")) {
+                                                               String name = line[9];
+
+                                                               Info.put(i, name);
+
+                                                           }
+                                                       }
+
+                                                       Info = valueSortReorder(Info);
+
+                                                       for (Map.Entry<Integer, String> entry : Info.entrySet()) {
+
+                                                           a.add(res.get(entry.getKey()));
+
+
+                                                       }
+                                                   }
+                                               } else if (spinner_interests.getSelectedItemPosition() != 0) {
+
+                                                   if (spinner_interests.getSelectedItemPosition() == 1) {
+
+                                                       Map<Integer, String> Info = new TreeMap<>();
+
+                                                       for (int i = 0; i < res.size(); i++) {
+
+                                                           String[] line = res.get(i).split("   ");
+
+                                                           if (!line[11].equals("")) {
+                                                               String name = line[11];
+
+                                                               Info.put(i, name);
+
+                                                           }
+                                                       }
+
+                                                       Info = valueSortInOrder(Info);
+
+                                                       for (Map.Entry<Integer, String> entry : Info.entrySet()) {
+
+                                                           a.add(res.get(entry.getKey()));
+
+                                                       }
+
+                                                   } else if (spinner_interests.getSelectedItemPosition() == 2) {
+
+                                                       Map<Integer, String> Info = new TreeMap<>();
+
+                                                       for (int i = 0; i < res.size(); i++) {
+
+                                                           String[] line = res.get(i).split("   ");
+                                                           if (!line[11].equals("")) {
+                                                               String name = line[11];
+
+                                                               Info.put(i, name);
+
+                                                           }
+                                                       }
+
+                                                       Info = valueSortReorder(Info);
+
+                                                       for (Map.Entry<Integer, String> entry : Info.entrySet()) {
+
+                                                           a.add(res.get(entry.getKey()));
+
+
+                                                       }
+                                                   }
+                                               } else if (spinner_phone.getSelectedItemPosition() != 0) {
+
+                                                   if (spinner_phone.getSelectedItemPosition() == 1) {
+
+                                                       Map<Integer, String> Info = new TreeMap<>();
+
+                                                       for (int i = 0; i < res.size(); i++) {
+
+                                                           String[] line = res.get(i).split("   ");
+
+                                                           if (!line[15].equals("")) {
+                                                               String name = line[15];
+
+                                                               Info.put(i, name);
+
+                                                           }
+                                                       }
+
+                                                       Info = valueSortInOrder(Info);
+
+                                                       for (Map.Entry<Integer, String> entry : Info.entrySet()) {
+
+                                                           a.add(res.get(entry.getKey()));
+
+                                                       }
+
+                                                   } else if (spinner_phone.getSelectedItemPosition() == 2) {
+
+                                                       Map<Integer, String> Info = new TreeMap<>();
+
+                                                       for (int i = 0; i < res.size(); i++) {
+
+                                                           String[] line = res.get(i).split("   ");
+                                                           if (!line[15].equals("")) {
+                                                               String name = line[15];
+
+                                                               Info.put(i, name);
+
+                                                           }
+                                                       }
+
+                                                       Info = valueSortReorder(Info);
+
+                                                       for (Map.Entry<Integer, String> entry : Info.entrySet()) {
+
+                                                           a.add(res.get(entry.getKey()));
+
+
+                                                       }
+                                                   }
+                                               } else if (spinner_groups.getSelectedItemPosition() != 0) {
+
+                                                   if (spinner_groups.getSelectedItemPosition() == 1) {
+
+                                                       Map<Integer, Integer> Info = new TreeMap<>();
+
+                                                       for (int i = 0; i < res.size(); i++) {
+
+                                                           String[] line = res.get(i).split("   ");
+
+                                                           if (!line[12].equals("")) {
+                                                               int name = Integer.parseInt(line[12]);
+
+                                                               Info.put(i, name);
+
+                                                           }
+                                                       }
+
+                                                       Info = valueSortInOrder(Info);
+
+                                                       for (Map.Entry<Integer, Integer> entry : Info.entrySet()) {
+
+                                                           a.add(res.get(entry.getKey()));
+
+                                                       }
+
+                                                   } else if (spinner_groups.getSelectedItemPosition() == 2) {
+
+                                                       Map<Integer, Integer> Info = new TreeMap<>();
+
+                                                       for (int i = 0; i < res.size(); i++) {
+
+                                                           String[] line = res.get(i).split("   ");
+                                                           if (!line[12].equals("")) {
+                                                               int name = Integer.parseInt(line[12]);
+
+                                                               Info.put(i, name);
+
+                                                           }
+                                                       }
+
+                                                       Info = valueSortReorder(Info);
+
+                                                       for (Map.Entry<Integer, Integer> entry : Info.entrySet()) {
+
+                                                           a.add(res.get(entry.getKey()));
+
+
+                                                       }
+                                                   }
+                                               } else if (spinner_friends.getSelectedItemPosition() != 0) {
+
+                                                   if (spinner_friends.getSelectedItemPosition() == 1) {
+
+                                                       Map<Integer, Integer> Info = new TreeMap<>();
+
+                                                       for (int i = 0; i < res.size(); i++) {
+
+                                                           String[] line = res.get(i).split("   ");
+
+                                                           if (!line[13].equals("")) {
+                                                               int name = Integer.parseInt(line[13]);
+
+                                                               Info.put(i, name);
+
+                                                           }
+                                                       }
+
+                                                       Info = valueSortInOrder(Info);
+
+                                                       for (Map.Entry<Integer, Integer> entry : Info.entrySet()) {
+
+                                                           a.add(res.get(entry.getKey()));
+
+                                                       }
+
+                                                   } else if (spinner_friends.getSelectedItemPosition() == 2) {
+
+                                                       Map<Integer, Integer> Info = new TreeMap<>();
+
+                                                       for (int i = 0; i < res.size(); i++) {
+
+                                                           String[] line = res.get(i).split("   ");
+                                                           if (!line[13].equals("")) {
+                                                               int name = Integer.parseInt(line[13]);
+
+                                                               Info.put(i, name);
+
+                                                           }
+                                                       }
+
+                                                       Info = valueSortReorder(Info);
+
+                                                       for (Map.Entry<Integer, Integer> entry : Info.entrySet()) {
+
+                                                           a.add(res.get(entry.getKey()));
+
+
+                                                       }
+                                                   }
+                                               } else if (spinner_followers.getSelectedItemPosition() != 0) {
+
+                                                   if (spinner_followers.getSelectedItemPosition() == 1) {
+
+                                                       Map<Integer, Integer> Info = new TreeMap<>();
+
+                                                       for (int i = 0; i < res.size(); i++) {
+
+                                                           String[] line = res.get(i).split("   ");
+
+                                                           if (!line[15].equals("")) {
+                                                               int name = Integer.parseInt(line[15]);
+
+                                                               Info.put(i, name);
+
+                                                           }
+                                                       }
+
+                                                       Info = valueSortInOrder(Info);
+
+                                                       for (Map.Entry<Integer, Integer> entry : Info.entrySet()) {
+
+                                                           a.add(res.get(entry.getKey()));
+
+                                                       }
+
+                                                   } else if (spinner_followers.getSelectedItemPosition() == 2) {
+
+                                                       Map<Integer, Integer> Info = new TreeMap<>();
+
+                                                       for (int i = 0; i < res.size(); i++) {
+
+                                                           String[] line = res.get(i).split("   ");
+                                                           if (!line[15].equals("")) {
+                                                               int name = Integer.parseInt(line[15]);
+
+                                                               Info.put(i, name);
+
+                                                           }
+                                                       }
+
+                                                       Info = valueSortReorder(Info);
+
+                                                       for (Map.Entry<Integer, Integer> entry : Info.entrySet()) {
+
+                                                           a.add(res.get(entry.getKey()));
+
+
+                                                       }
+                                                   }
+                                               }
+
+
+
+                tableLayout.removeViews(2, tableLayout.getChildCount() - 2);
+
+
+                        for (int i = 0; i < a.size(); i++) {
+
+                            TableRow row = new TableRow(getApplicationContext());
+                            row.setLayoutParams(new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT,
+                                    TableLayout.LayoutParams.WRAP_CONTENT));
+                            String[] colText = a.get(i).split("   ");
+                            for (String text : colText) {
+                                TextView tv = new TextView(getApplicationContext());
+                                tv.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT,
+                                        TableRow.LayoutParams.WRAP_CONTENT));
+                                tv.setGravity(Gravity.CENTER);
+                                tv.setTextSize(16);
+                                tv.setPadding(5, 5, 5, 5);
+                                tv.setText(text);
+                                row.addView(tv);
+                            }
+                            tableLayout.addView(row);
+
                         }
-                        tableLayout.addView(row);
 
-                    }
-
-                }
+            }
         });
 
 
@@ -450,6 +1082,57 @@ public class MainActivity extends AppCompatActivity {
 
         });
 
+    }
+
+
+    public static <K, V extends Comparable<V> > Map<K, V>
+    valueSortInOrder(final Map<K, V> map)
+    {
+        Comparator<K> valueComparator = new Comparator<K>()
+        {
+
+            public int compare(K k1, K k2)
+            {
+
+                int comp = map.get(k1).compareTo(map.get(k2));
+
+                if (comp == 0)
+                    return 1;
+
+                else
+                    return comp;
+            }
+        };
+        Map<K, V> sorted = new TreeMap<K, V>(valueComparator);
+
+        sorted.putAll(map);
+
+        return sorted;
+    }
+
+    public static <K, V extends Comparable<V> > Map<K, V>
+    valueSortReorder(final Map<K, V> map)
+    {
+        Comparator<K> valueComparator = new Comparator<K>()
+        {
+
+            public int compare(K k1, K k2)
+            {
+
+                int comp = map.get(k2).compareTo(map.get(k1));
+
+                if (comp == 0)
+                    return 1;
+
+                else
+                    return comp;
+            }
+        };
+        Map<K, V> sorted = new TreeMap<K, V>(valueComparator);
+
+        sorted.putAll(map);
+
+        return sorted;
     }
 }
 
