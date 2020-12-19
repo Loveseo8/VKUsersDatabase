@@ -316,12 +316,13 @@ public class MainActivity extends AppCompatActivity {
         button_search = findViewById(R.id.button_search);
         button_sort = findViewById(R.id.button_sort);
 
+        tableLayout = (TableLayout) findViewById(R.id.tablelayout);
+
 
         button_sort.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                if (tableLayout.getChildCount() > 2) {
 
                     ArrayList<String> a = new ArrayList<>();
 
@@ -329,7 +330,7 @@ public class MainActivity extends AppCompatActivity {
                     a = (ArrayList<String>) res.stream().filter(s -> s.contains("М")).collect(Collectors.toList());
 
 
-                    tableLayout.removeViews(2, tableLayout.getChildCount() - 1);
+                    tableLayout.removeViews(2, tableLayout.getChildCount() - 2);
 
 
                     for (int i = 0; i < a.size(); i++) {
@@ -353,7 +354,6 @@ public class MainActivity extends AppCompatActivity {
                     }
 
                 }
-            }
         });
 
 
@@ -373,9 +373,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                if (tableLayout.getChildCount() > 2) {
 
-                    tableLayout.removeViews(2, tableLayout.getChildCount() - 1);
+                    tableLayout.removeViews(2, tableLayout.getChildCount() - 2);
 
                     String str = enter_id.getText().toString();
 
@@ -415,7 +414,6 @@ public class MainActivity extends AppCompatActivity {
                     }
 
                 }
-            }
         });
 
 
@@ -423,10 +421,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                if (tableLayout.getChildCount() > 2) {
-
                     tableLayout.removeViews(2
-                            , tableLayout.getChildCount() - 1);
+                            , tableLayout.getChildCount() - 2);
 
                     res.clear();
 
@@ -451,11 +447,8 @@ public class MainActivity extends AppCompatActivity {
 
                     }
                 }
-            }
 
         });
-
-        tableLayout = (TableLayout) findViewById(R.id.tablelayout);
 
     }
 }
