@@ -1,4 +1,36 @@
 <resources>
     <string name="app_name">VK Users Database</string>
     <integer name="com_vk_sdk_AppId">7696922</integer>
+
+    <string-array name="colors">
+        <item>Фильтр</item>
+        <item>красный</item>
+        <item>зелёный</item>
+        <item>синий</item>
+    </string-array>
+
+    <string-array name="number">
+        <item>Фильтр</item>
+        <item>по возрастанию</item>
+        <item>по убыванию</item>
+    </string-array>
+
+    <string-array name="string">
+        <item>Фильтр</item>
+        <item>от А до Я</item>
+        <item>от Я до А</item>
+    </string-array>
+
+    <string-array name="sex">
+        <item>Фильтр</item>
+        <item>мужской</item>
+        <item>женский</item>
+        <item>не указан</item>
+    </string-array>
+
+    <string-array name="photo">
+        <item>Фильтр</item>
+        <item>Да</item>
+        <item>Нет</item>
+    </string-array>
 </resources>

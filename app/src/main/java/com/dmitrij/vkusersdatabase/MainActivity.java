@@ -1,18 +1,12 @@
 package com.dmitrij.vkusersdatabase;
 
 import android.annotation.SuppressLint;
-import android.app.ProgressDialog;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteException;
-import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Spinner;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -327,35 +321,38 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                ArrayList<String> a = new ArrayList<>();
+                if (tableLayout.getChildCount() > 2) {
 
-                res = db.getRecords();
-                a = (ArrayList<String>) res.stream().filter(s -> s.contains("М")).collect(Collectors.toList());
+                    ArrayList<String> a = new ArrayList<>();
+
+                    res = db.getRecords();
+                    a = (ArrayList<String>) res.stream().filter(s -> s.contains("М")).collect(Collectors.toList());
 
 
-                tableLayout.removeViews(1, tableLayout.getChildCount() - 1);
+                    tableLayout.removeViews(2, tableLayout.getChildCount() - 1);
 
 
-                for (int i = 0; i < a.size(); i++) {
+                    for (int i = 0; i < a.size(); i++) {
 
-                    TableRow row = new TableRow(getApplicationContext());
-                    row.setLayoutParams(new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT,
-                            TableLayout.LayoutParams.WRAP_CONTENT));
-                    String[] colText = a.get(i).split("   ");
-                    for (String text : colText) {
-                        TextView tv = new TextView(getApplicationContext());
-                        tv.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT,
-                                TableRow.LayoutParams.WRAP_CONTENT));
-                        tv.setGravity(Gravity.CENTER);
-                        tv.setTextSize(16);
-                        tv.setPadding(5, 5, 5, 5);
-                        tv.setText(text);
-                        row.addView(tv);
+                        TableRow row = new TableRow(getApplicationContext());
+                        row.setLayoutParams(new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT,
+                                TableLayout.LayoutParams.WRAP_CONTENT));
+                        String[] colText = a.get(i).split("   ");
+                        for (String text : colText) {
+                            TextView tv = new TextView(getApplicationContext());
+                            tv.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT,
+                                    TableRow.LayoutParams.WRAP_CONTENT));
+                            tv.setGravity(Gravity.CENTER);
+                            tv.setTextSize(16);
+                            tv.setPadding(5, 5, 5, 5);
+                            tv.setText(text);
+                            row.addView(tv);
+                        }
+                        tableLayout.addView(row);
+
                     }
-                    tableLayout.addView(row);
 
                 }
-
             }
         });
 
@@ -376,45 +373,48 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                tableLayout.removeViews(1, tableLayout.getChildCount() - 1);
+                if (tableLayout.getChildCount() > 2) {
 
-                String str = enter_id.getText().toString();
+                    tableLayout.removeViews(2, tableLayout.getChildCount() - 1);
 
-                if (str != null) {
+                    String str = enter_id.getText().toString();
 
-                    ArrayList<String> search = new ArrayList<>();
+                    if (str != null) {
 
-                    res = db.getRecords();
-                    search = (ArrayList<String>) res.stream().filter(s -> s.contains(str)).collect(Collectors.toList());
+                        ArrayList<String> search = new ArrayList<>();
 
-                    enter_id.setText("");
+                        res = db.getRecords();
+                        search = (ArrayList<String>) res.stream().filter(s -> s.contains(str)).collect(Collectors.toList());
 
-                    if (search.size() > 0) {
+                        enter_id.setText("");
 
-                        for (int i = 0; i < search.size(); i++) {
+                        if (search.size() > 0) {
+
+                            for (int i = 0; i < search.size(); i++) {
 
 
-                            TableRow row = new TableRow(getApplicationContext());
-                            row.setLayoutParams(new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT,
-                                    TableLayout.LayoutParams.WRAP_CONTENT));
-                            String[] colText = search.get(i).split("   ");
-                            for (String text : colText) {
-                                TextView tv = new TextView(getApplicationContext());
-                                tv.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT,
-                                        TableRow.LayoutParams.WRAP_CONTENT));
-                                tv.setGravity(Gravity.CENTER);
-                                tv.setTextSize(16);
-                                tv.setPadding(5, 5, 5, 5);
-                                tv.setText(text);
-                                row.addView(tv);
+                                TableRow row = new TableRow(getApplicationContext());
+                                row.setLayoutParams(new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT,
+                                        TableLayout.LayoutParams.WRAP_CONTENT));
+                                String[] colText = search.get(i).split("   ");
+                                for (String text : colText) {
+                                    TextView tv = new TextView(getApplicationContext());
+                                    tv.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT,
+                                            TableRow.LayoutParams.WRAP_CONTENT));
+                                    tv.setGravity(Gravity.CENTER);
+                                    tv.setTextSize(16);
+                                    tv.setPadding(5, 5, 5, 5);
+                                    tv.setText(text);
+                                    row.addView(tv);
+                                }
+                                tableLayout.addView(row);
+
                             }
-                            tableLayout.addView(row);
 
                         }
-
                     }
-                }
 
+                }
             }
         });
 
@@ -423,36 +423,40 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                tableLayout.removeViews(1, tableLayout.getChildCount() - 1);
+                if (tableLayout.getChildCount() > 2) {
 
-                res.clear();
+                    tableLayout.removeViews(2
+                            , tableLayout.getChildCount() - 1);
 
-                res = db.getRecords();
-                for (int i = 0; i < res.size(); i++) {
+                    res.clear();
 
-                    TableRow row = new TableRow(getApplicationContext());
-                    row.setLayoutParams(new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT,
-                            TableLayout.LayoutParams.WRAP_CONTENT));
-                    String[] colText = res.get(i).split("   ");
-                    for (String text : colText) {
-                        TextView tv = new TextView(getApplicationContext());
-                        tv.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT,
-                                TableRow.LayoutParams.WRAP_CONTENT));
-                        tv.setGravity(Gravity.CENTER);
-                        tv.setTextSize(16);
-                        tv.setPadding(5, 5, 5, 5);
-                        tv.setText(text);
-                        row.addView(tv);
+                    res = db.getRecords();
+                    for (int i = 0; i < res.size(); i++) {
+
+                        TableRow row = new TableRow(getApplicationContext());
+                        row.setLayoutParams(new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT,
+                                TableLayout.LayoutParams.WRAP_CONTENT));
+                        String[] colText = res.get(i).split("   ");
+                        for (String text : colText) {
+                            TextView tv = new TextView(getApplicationContext());
+                            tv.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT,
+                                    TableRow.LayoutParams.WRAP_CONTENT));
+                            tv.setGravity(Gravity.CENTER);
+                            tv.setTextSize(16);
+                            tv.setPadding(5, 5, 5, 5);
+                            tv.setText(text);
+                            row.addView(tv);
+                        }
+                        tableLayout.addView(row);
+
                     }
-                    tableLayout.addView(row);
-
                 }
             }
 
         });
 
         tableLayout = (TableLayout) findViewById(R.id.tablelayout);
-        
+
     }
 }
 
