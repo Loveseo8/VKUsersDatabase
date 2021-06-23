@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">VK Users Database</string>
-    <integer name="com_vk_sdk_AppId">7696922</integer>
 
     <string-array name="colors">
         <item>Фильтр</item>
